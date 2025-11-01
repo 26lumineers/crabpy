@@ -196,9 +196,26 @@
 //     resting.state_respresent();
 // }
 //
-// traits
-trait Attack {
-    fn execute(&self);
+// traits and generics
+trait DisplayItem {
+    fn display(&self);
+}
+struct Inventory<T> {
+    item: T,
+}
+impl<T> DisplayItem for Inventory<T>
+where
+    T: std::fmt::Debug,
+{
+    fn display(&self) {
+        println!("Inventory item: {:?}", self.item);
+    }
 }
 
-fn main() {}
+fn main() {
+    let gold = Inventory { item: 100 };
+    gold.display();
+
+    let sword = Inventory { item: "sword" };
+    sword.display();
+}
