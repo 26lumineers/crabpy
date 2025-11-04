@@ -197,25 +197,106 @@
 // }
 //
 // traits and generics
-trait DisplayItem {
-    fn display(&self);
+// trait DisplayItem {
+//     fn display(&self);
+// }
+// struct Inventory<T> {
+//     item: T,
+// }
+// impl<T> DisplayItem for Inventory<T>
+// where
+//     T: std::fmt::Debug,
+// {
+//     fn display(&self) {
+//         println!("Inventory item: {:?}", self.item);
+//     }
+// }
+
+// fn main() {
+//     let gold = Inventory { item: 100 };
+//     gold.display();
+
+//     let sword = Inventory { item: "sword" };
+//     sword.display();
+// }
+
+// fn main() {
+//     let map = String::from("old map");
+//     let borrowed_map = &map;
+//     let mut new_map = borrowed_map.to_string();
+//     new_map.push_str(" to new map");
+//     println!("{}", new_map);
+// }
+
+// fn main() {
+//     let fruits = ["apple", "banana", "orange"];
+//     for fruit in fruits.iter() {
+//         if fruit == &"apple" {
+//             println!("Found an apple!");
+//         } else {
+//             println!("{}", fruit);
+//         }
+//     }
+// }
+//
+// Vector!
+// fn main() {
+//     let mut items = vec!["banana", "orange", "mango"];
+//     let last_item = items.pop();
+//     let first_item = items.remove(0);
+
+//     let items_length = items.len();
+//     let item_cap = items.capacity();
+//     println!("{}", first_item);
+// }
+//Vector and closures
+// fn main() {
+//     let treasures = vec![100, 200, 300];
+//     let new_treasures: Vec<i32> = treasures.iter().map(|x| x * 2).collect();
+//     println!("doubled treasures : {:?}", new_treasures);
+// }
+//
+
+// use std::collections::HashMap;
+// // Hashmap
+// fn main() {
+//     let mut treasures: HashMap<&str, i32> = HashMap::new();
+//     treasures.insert("Silver Coin", 100);
+//     treasures.insert("Sword", 200);
+
+//     if let Some(val) = treasures.get_mut("Silver Coin") {
+//         *val += 5;
+//     }
+
+//     println!("{:?}", treasures);
+// }
+
+//Error handling
+fn main() {
+    let chest_result = match open_chest(true) {
+        None => println!("No treasure found!"),
+        Some(treasure) => println!("Treasure found: {}", treasure),
+    };
+    println!("{:?}", chest_result);
+    let door_result: String = match open_door(false) {
+        Ok(safe) => safe,
+        Err(err) => panic!("{}", err),
+    };
+    println!("{:?}", door_result);
 }
-struct Inventory<T> {
-    item: T,
-}
-impl<T> DisplayItem for Inventory<T>
-where
-    T: std::fmt::Debug,
-{
-    fn display(&self) {
-        println!("Inventory item: {:?}", self.item);
+//Option
+fn open_chest(is_empty: bool) -> Option<String> {
+    if is_empty {
+        None
+    } else {
+        Some("Gold".to_string())
     }
 }
 
-fn main() {
-    let gold = Inventory { item: 100 };
-    gold.display();
-
-    let sword = Inventory { item: "sword" };
-    sword.display();
+fn open_door(is_danger: bool) -> Result<String, String> {
+    if is_danger {
+        Err("Danger!".to_string())
+    } else {
+        Ok("Door opened!".to_string())
+    }
 }
