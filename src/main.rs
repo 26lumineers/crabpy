@@ -272,31 +272,162 @@
 // }
 
 //Error handling
-fn main() {
-    let chest_result = match open_chest(true) {
-        None => println!("No treasure found!"),
-        Some(treasure) => println!("Treasure found: {}", treasure),
-    };
-    println!("{:?}", chest_result);
-    let door_result: String = match open_door(false) {
-        Ok(safe) => safe,
-        Err(err) => panic!("{}", err),
-    };
-    println!("{:?}", door_result);
-}
-//Option
-fn open_chest(is_empty: bool) -> Option<String> {
-    if is_empty {
-        None
-    } else {
-        Some("Gold".to_string())
-    }
-}
+// fn main() {
+//     let chest_result = match open_chest(true) {
+//         None => println!("No treasure found!"),
+//         Some(treasure) => println!("Treasure found: {}", treasure),
+//     };
+//     println!("{:?}", chest_result);
+//     let door_result: String = match open_door(false) {
+//         Ok(safe) => safe,
+//         Err(err) => panic!("{}", err),
+//     };
+//     println!("{:?}", door_result);
+// }
+// //Option
+// fn open_chest(is_empty: bool) -> Option<String> {
+//     if is_empty {
+//         None
+//     } else {
+//         Some("Gold".to_string())
+//     }
+// }
 
-fn open_door(is_danger: bool) -> Result<String, String> {
-    if is_danger {
-        Err("Danger!".to_string())
-    } else {
-        Ok("Door opened!".to_string())
-    }
+// fn open_door(is_danger: bool) -> Result<String, String> {
+//     if is_danger {
+//         Err("Danger!".to_string())
+//     } else {
+//         Ok("Door opened!".to_string())
+//     }
+// }
+//Smart pointer
+// fn main() {
+//     let chest = Box::new(10);
+
+//     let share_chest = Rc::new(RefCell::new(chest));
+
+//     **share_chest.borrow_mut() += 10;
+//     **share_chest.borrow_mut() += 5;
+// }
+
+// fn main() {
+//     let chest = 10;
+
+//     let share_chest = Rc::new(RefCell::new(chest));
+
+//     *share_chest.borrow_mut() += 10;
+//     *share_chest.borrow_mut() += 5;
+//     println!("chest {}", chest);
+// }
+
+//Traits as a type
+//
+//
+// trait Weapon {
+//     fn attack(&self);
+// }
+// struct Sword;
+// struct Bow;
+// impl Weapon for Sword {
+//     fn attack(&self) {
+//         println!("swinging a sword!");
+//     }
+// }
+
+// impl Weapon for Bow {
+//     fn attack(&self) {
+//         println!("shooting an arrow!");
+//     }
+// }
+// fn main() {}
+
+// trait Gear {
+//     fn use_gear(&self);
+// }
+
+// struct Sword;
+// struct Bow;
+// struct Potion;
+// struct Shield;
+
+// impl Gear for Sword {
+//     fn use_gear(&self) {
+//         println!("swinging a sword!");
+//     }
+// }
+
+// impl Gear for Bow {
+//     fn use_gear(&self) {
+//         println!("shooting an arrow!");
+//     }
+// }
+
+// impl Gear for Potion {
+//     fn use_gear(&self) {
+//         println!("drinking a potion!");
+//     }
+// }
+
+// impl Gear for Shield {
+//     fn use_gear(&self) {
+//         println!("blocking with a shield!");
+//     }
+// }
+
+// fn use_gear<T: Gear>(item: T) {
+//     item.use_gear();
+// }
+// fn main() {
+//     let crab_sword = Sword;
+//     let crab_bow = Bow;
+//     let crab_potion = Potion;
+//     let crab_shield = Shield;
+
+//     use_gear(crab_sword);
+//     use_gear(crab_bow);
+//     use_gear(crab_potion);
+//     use_gear(crab_shield);
+// }
+
+//Threading.
+// fn main() {
+//     let threaded = thread::spawn(|| println!("crabpy is cooking"));
+//     threaded.join().unwrap(); //main thread wait the minors thread
+// }
+//
+use std::{
+    sync::{Arc, Mutex},
+    thread,
+};
+fn main() {
+    let gold = Arc::new(Mutex::new(10));
+
+    let loot1 = thread::spawn({
+        let gold_artifact = Arc::clone(&gold);
+        move || {
+            let mut gold = gold_artifact.lock().unwrap();
+            *gold += 100;
+        }
+    });
+    let loot2 = thread::spawn({
+        let gold_artifact = Arc::clone(&gold);
+        move || {
+            let mut gold = gold_artifact.lock().unwrap();
+            *gold += 100;
+        }
+    });
+
+    let loot3 = thread::spawn({
+        let gold_artifact = Arc::clone(&gold);
+        move || {
+            let mut gold = gold_artifact.lock().unwrap();
+            *gold += 100;
+        }
+    });
+
+    loot1.join().unwrap();
+    loot2.join().unwrap();
+    loot3.join().unwrap();
+
+    println!("gold found :: {}", gold.lock().unwrap());
 }
