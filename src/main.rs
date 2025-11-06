@@ -395,39 +395,94 @@
 //     threaded.join().unwrap(); //main thread wait the minors thread
 // }
 //
-use std::{
-    sync::{Arc, Mutex},
-    thread,
-};
+// use std::{
+//     sync::{Arc, Mutex},
+//     thread,
+// };
+// fn main() {
+//     let gold = Arc::new(Mutex::new(10));
+
+//     let loot1 = thread::spawn({
+//         let gold_artifact = Arc::clone(&gold);
+//         move || {
+//             let mut gold = gold_artifact.lock().unwrap();
+//             *gold += 100;
+//         }
+//     });
+//     let loot2 = thread::spawn({
+//         let gold_artifact = Arc::clone(&gold);
+//         move || {
+//             let mut gold = gold_artifact.lock().unwrap();
+//             *gold += 100;
+//         }
+//     });
+
+//     let loot3 = thread::spawn({
+//         let gold_artifact = Arc::clone(&gold);
+//         move || {
+//             let mut gold = gold_artifact.lock().unwrap();
+//             *gold += 100;
+//         }
+//     });
+
+//     loot1.join().unwrap();
+//     loot2.join().unwrap();
+//     loot3.join().unwrap();
+
+use std::sync::{Arc, mpsc};
+use std::thread;
+
+//     println!("gold found :: {}", gold.lock().unwrap());
+// }
+//Channels
+// fn main() {
+//     let items = vec![
+//         "sword".to_string(),
+//         "bow".to_string(),
+//         "potion".to_string(),
+//         "shield".to_string(),
+//     ];
+//     let (sender, receiver) = mpsc::sync_channel(items.len());
+//     let sender_arc = Arc::new(sender);
+
+//     for item in items.clone().into_iter() {
+//         thread::spawn({
+//             let thread_sender = Arc::clone(&sender_arc);
+//             let item = item.clone();
+//             move || {
+//                 thread_sender
+//                     .send(format!("worker {}, task completed!", item))
+//                     .unwrap()
+//             }
+//         });
+//     }
+//     for _ in 0..items.len() {
+//         let item = receiver.recv().unwrap();
+//         println!("Received :{}", item)
+//     }
+// }
+// Channels 2 multi loot and cal
+//
 fn main() {
-    let gold = Arc::new(Mutex::new(10));
+    let loot = vec![10, 20, 30, 40];
+    let mut crab_gold_coins = 10;
 
-    let loot1 = thread::spawn({
-        let gold_artifact = Arc::clone(&gold);
-        move || {
-            let mut gold = gold_artifact.lock().unwrap();
-            *gold += 100;
-        }
-    });
-    let loot2 = thread::spawn({
-        let gold_artifact = Arc::clone(&gold);
-        move || {
-            let mut gold = gold_artifact.lock().unwrap();
-            *gold += 100;
-        }
-    });
+    let (sender, receiver) = mpsc::sync_channel(loot.len());
+    let sender_arc = Arc::new(sender);
 
-    let loot3 = thread::spawn({
-        let gold_artifact = Arc::clone(&gold);
-        move || {
-            let mut gold = gold_artifact.lock().unwrap();
-            *gold += 100;
-        }
-    });
+    for loot in loot.clone().into_iter() {
+        thread::spawn({
+            let sender = Arc::clone(&sender_arc);
+            move || {
+                sender.send(loot).unwrap();
+            }
+        });
+    }
 
-    loot1.join().unwrap();
-    loot2.join().unwrap();
-    loot3.join().unwrap();
+    for _ in 0..loot.len() {
+        let loot = receiver.recv().unwrap();
+        crab_gold_coins += loot;
+    }
 
-    println!("gold found :: {}", gold.lock().unwrap());
+    println!("crab_gold_coins are {}", crab_gold_coins);
 }
